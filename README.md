@@ -11,7 +11,7 @@ The design matrix $\Phi$ is constructed with a bias term, and its rank is checke
 
 ### Pseudoinverse Solution
 
-Using `numpy.linalg.pinv`, the script computes the weight vector $w=(\Phi^t\Phi)^{+}\Phi^ty$ and prints the result.
+Using `numpy.linalg.pinv`, the script computes the weight vector $w=(\Phi^\top\Phi)^{+}\Phi^\top y$ and prints the result.
 
 ### Spectral Decomposition
 
@@ -60,3 +60,75 @@ I also tested a model that had no regularization or cross validation using 100 t
 </p>
 
 It can be seen that another way to effectively reduce error is to introduce more training points, reducing the necessity of regularization.
+
+## P4: Eigenfaces
+
+`p4.py` computes eigenfaces using PCA on a dataset of aligned grayscale face images. All training images in `P4_data/train` are loaded with PIL, converted to arrays, flattened, and stored in a single data matrix. After stacking the images, the mean face vector is computed and subtracted from every image. The covariance matrix is then calculated with
+
+$COV=\frac{1}{N-1}(X-\mu)^\top(X-\mu)$,
+
+where each row of $X$ corresponds to a flattened image. The script prints the shape of the mean vector, the covariance matrix, and the number of eigenvalues.
+
+The eigenvalues and eigenvectors of the covariance matrix are computed using `numpy.linalg.eigh`, then sorted in descending order so that the top components correspond to the directions of greatest variance. These leading eigenvectors are the "eigenfaces", which highlight the major modes of variation across the dataset.
+
+### Reconstruction
+
+A test image (`subject14.surprised`) is loaded, flattened, centered, and reconstructed using different values of $M$, the number of principal components. For each $M$, the script:
+
+1. Takes the top $M$ eigenvectors.
+2. Projects the centered test image onto them.
+3. Reconstructs the image from this projection.
+
+The reconstructions are plotted with the magma colormap:
+
+<p align="center"> 
+  <img src="https://github.com/KyleDouglasP/cs461-hw2/blob/main/img/Reconstruct_Face.PNG" /> 
+</p>
+
+As $M$ increases, the reconstruction becomes sharper and captures more detail, since more principal components are included.
+
+### Top 10 Eigenfaces
+
+Finally, the script reshapes the top 10 eigenvectors into 60x80 images and normalizes them for visualization. These eigenfaces show the dominant features shared across the training images, such as overall face structure and lighting patterns.
+
+<p align="center"> 
+  <img src="https://github.com/KyleDouglasP/cs461-hw2/blob/main/img/Top_10_Eigenfaces.PNG?raw=true" /> 
+</p>
+
+## P5: Estimation of Year Made
+
+`p5.py` performs PCA on the VGG16 logit features provided for paintings, with the goal of visualizing the data in lower dimensions and then building a regression model to estimate the year a painting was created.
+
+### PCA on VGG16 Logits
+
+The script loads `vgg16_train.npz` and `vgg16_test.npz`, concatenates them for PCA, and centers the logits. The covariance matrix is computed, followed by eigen-decomposition using `numpy.linalg.eigh`. The eigenvalues and eigenvectors are then sorted from largest to smallest.
+
+Using the top principal components, the script produces 1D and 2D PCA visualizations:
+
+<p align="center"> 
+  <img src="https://github.com/KyleDouglasP/cs461-hw2/blob/main/img/PCA.PNG" /> 
+</p>
+
+In the 1D case, almost all points collapse near $x=0$, making it difficult to perform meaningful regression on this projection alone. The 2D PCA plot offers much more spread since it includes the second principal component, giving a more stable representation for downstream modeling.
+
+### Polynomial Regression Model
+
+To predict year from PCA features, a polynomial basis function was implemented for the 2D case. This allowed testing models of various degrees by generating the design matrix $\Phi$ with different polynomial expansions.
+
+A validation set of size 200 was taken from the training data, without using any cross-validation or regularization. By increasing the polynomial degree, the validation MSE was recorded for each model. Around degree 5, the validation loss began to level off, indicating that higher degrees would likely overfit.
+
+<p align="center"> 
+  <img src="https://github.com/KyleDouglasP/cs461-hw2/blob/main/img/Year_Validation.PNG" /> 
+</p>
+
+Using degree 5 yielded a validation MSE of $\approx5582.51$.
+
+### Testing and Evaluation
+
+The final model (degree 5) was evaluated on the provided test set. The resulting MSE was significantly higher (6,214,025), suggesting that the model overfitted the training data. This indicates that further regularization or more training samples would be required to achieve stable year predictions.
+
+<p align="center"> 
+  <img src="https://github.com/KyleDouglasP/cs461-hw2/blob/main/img/Year_Test.PNG" /> 
+</p>
+
+The most accurate prediction was on `4717_bridge-in-abramtsevo-1879.jpg`, with squared error $\approx0.27$. The least accurate prediction was on `1151_christ-before-herod-1509.jpg`, with a very large squared error, highlighting the difficulty of the task.
