@@ -2,12 +2,10 @@ import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
-W = np.array([ 1.79651288e+03,  4.61254049e+01 , 1.14196321e+02,  7.36370978e+01,
- -4.24082643e+01,  2.32477998e+01, -9.71219833e+00 , 1.67766542e+01,
- -2.61039572e+00, -1.32098262e-01])
+W = np.array([ 1786.9698684523012, 121.512865758543, 135.0613692698496, 109.9214405007493, -108.09920026487828, 23.25854543684881, -62.52672358038889, 8.01631295025755, -55.156723681489495, -4.970100573598966, -9.881991369284515, -21.474129987758236, -4.569036585525209, -10.118143720608252, -1.4675213513741237, 0.7918527585952612, -2.113037296666221, -3.1717326951392533, -0.5853961561820902, -0.4361064396921838, -0.0665283169550251])
 print(W.shape)
 
-def polynomial(data, degree=3):
+def polynomial(data, degree=5):
     Phi_x = np.ones((data.shape[0], 1)) # Bias term
     for d in range(1, degree + 1):
         for i in range(d + 1):
@@ -20,18 +18,13 @@ test_logit=np.load("P5_data/vgg16_test.npz")["logit"]
 test_year=np.load("P5_data/vgg16_test.npz")["year"]
 test_filename=np.load("P5_data/vgg16_test.npz", allow_pickle=True)["filename"] 
 
-mean = np.sum(test_logit, axis=0, keepdims=True) / test_logit.shape[0]
+# Load PCA parameters
+pca_params = np.load("pca_params.npz")
+mean = pca_params["mean"]
+eigenvectors = pca_params["eigenvectors"]
+eigenvalues = pca_params["eigenvalues"]
 
 test_logit_centered = test_logit-mean
-cov = np.matmul(test_logit_centered.T, test_logit_centered) / (test_logit_centered.shape[0] - 1)
-
-# Eigen decomposition of the covariance matrix
-eigenvalues, eigenvectors = np.linalg.eigh(cov)
-
-# Sort eigenvalues and eigenvectors for PCA
-sorted_indices = np.argsort(eigenvalues)[::-1]  # Sort in descending order
-eigenvalues = eigenvalues[sorted_indices]
-eigenvectors = eigenvectors[:, sorted_indices]
 
 two_dimensional_data = np.dot(test_logit_centered, eigenvectors[:, :2]) * (1 / np.sqrt(eigenvalues[:2]))
 

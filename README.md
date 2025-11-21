@@ -113,7 +113,7 @@ In the 1D case, almost all points collapse near $x=0$, making it difficult to pe
 
 ### Polynomial Regression Model
 
-To predict year from PCA features, a polynomial basis function was implemented for the 2D case. This allowed testing models of various degrees by generating the design matrix $\Phi$ with different polynomial expansions.
+To predict year from PCA features, a polynomial basis function was implemented for the 2D case in `year_train.py`. This allowed testing models of various degrees by generating the design matrix $\Phi$ with different polynomial expansions.
 
 A validation set of size 200 was taken from the training data, without using any cross-validation or regularization. By increasing the polynomial degree, the validation MSE was recorded for each model. Around degree 5, the validation loss began to level off, indicating that higher degrees would likely overfit.
 
@@ -121,14 +121,14 @@ A validation set of size 200 was taken from the training data, without using any
   <img src="https://github.com/KyleDouglasP/cs461-hw2/blob/main/img/Year_Validation.PNG" /> 
 </p>
 
-Using degree 5 yielded a validation MSE of $\approx5582.51$.
+Using degree 5 yielded a validation MSE of $\approx5582.51$ (off by $\approx75$ years). The eigenvectors, eigenvectors, and mean from training were saved in `pca_paramz.npz` to be used for PCA in testing.
 
 ### Testing and Evaluation
 
-The final model (degree 5) was evaluated on the provided test set. The resulting MSE was significantly higher (6,214,025), suggesting that the model overfitted the training data. This indicates that further regularization or more training samples would be required to achieve stable year predictions.
+The final model (degree 5) was evaluated on the provided test set in `year_test.py`. The resulting MSE was $\approx6531.58$ (off by $\approx81$ yaers), suggesting that the model overfitted the training data slightly. This indicates that further regularization or more training samples would be required to achieve even stable year predictions.
 
 <p align="center"> 
-  <img src="https://github.com/KyleDouglasP/cs461-hw2/blob/main/img/Year_Test.PNG" /> 
+  <img src="img/Year_Test.PNG" /> 
 </p>
 
-The most accurate prediction was on `4717_bridge-in-abramtsevo-1879.jpg`, with squared error $\approx0.27$. The least accurate prediction was on `1151_christ-before-herod-1509.jpg`, with a very large squared error, highlighting the difficulty of the task.
+The most accurate prediction was on `3689_crimea-gazebo-1929.jpg`, with squared error $\approx0.27$ (off by $\approx0.5$ years). The least accurate prediction was on `847_polyptych-of-st-luke-1455.jpg`, with a squared error of 184608 (off by $\approx429$ years), highlighting the difficulty of the task.

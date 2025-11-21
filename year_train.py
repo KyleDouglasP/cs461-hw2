@@ -18,6 +18,11 @@ sorted_indices = np.argsort(eigenvalues)[::-1]  # Sort in descending order
 eigenvalues = eigenvalues[sorted_indices]
 eigenvectors = eigenvectors[:, sorted_indices]
 
+np.savez("pca_params.npz",
+         mean=mean,
+         eigenvectors=eigenvectors,
+         eigenvalues=eigenvalues)
+
 two_dimensional_data = np.dot(train_logit_centered, eigenvectors[:, :2]) * (1 / np.sqrt(eigenvalues[:2]))
 
 # Cut the data into training and validation sets
