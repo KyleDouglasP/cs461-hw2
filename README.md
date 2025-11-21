@@ -125,7 +125,7 @@ Using degree 5 yielded a validation MSE of $\approx5582.51$ (off by $\approx75$ 
 
 ### Testing and Evaluation
 
-The final model (degree 5) was evaluated on the provided test set in `year_test.py`. The resulting MSE was $\approx6531.58$ (off by $\approx81$ yaers), suggesting that the model overfitted the training data slightly. This indicates that further regularization or more training samples would be required to achieve even stable year predictions.
+The final model (degree 5) was evaluated on the provided test set in `year_test.py`. The resulting MSE was $\approx6531.58$ (off by $\approx81$ years), suggesting that the model overfitted the training data slightly. This indicates that further regularization or more training samples would be required to achieve even stable year predictions.
 
 <p align="center"> 
   <img src="img/Year_Test.PNG" /> 
