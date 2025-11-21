@@ -132,3 +132,13 @@ The final model (degree 5) was evaluated on the provided test set in `year_test.
 </p>
 
 The most accurate prediction was on `3689_crimea-gazebo-1929.jpg`, with squared error $\approx0.27$ (off by $\approx0.5$ years). The least accurate prediction was on `847_polyptych-of-st-luke-1455.jpg`, with a squared error of 184608 (off by $\approx429$ years), highlighting the difficulty of the task.
+
+<p align="center">
+  <b>Best Prediction</b><br>
+  <img src="img/crimea-gazebo-1929.jpg" width="350"/>
+</p>
+
+<p align="center">
+  <b>Worst Prediction</b><br>
+  <img src="img/polyptych-of-st-luke-1455.jpg" width="350"/>
+</p>
